@@ -34,8 +34,8 @@ if(isset($_POST["save"])){
         } elseif($_FILES["content_file"]["size"] > MAX_CONTENT_SIZE){
             $errors["file"] = "File too large";
         } else {
-            $safe = time() . "_" . preg_replace("/[^a-zA-Z0-9._-]/", "", $_FILES["content_file"]["name"]);
-            if(move_uploaded_file($_FILES["content_file"]["tmp_name"], CONTENT_UPLOAD_DIR . $safe)){
+            $safe = time() . "_" . bin2hex(random_bytes(4)) . "_" . preg_replace("/[^a-zA-Z0-9._-]/", "", $_FILES["content_file"]["name"]);
+            if(saveUploadedFile($_FILES["content_file"], 'contents', $safe)){
                 $path = $safe;
                 $ftype = $ext;
             } else {

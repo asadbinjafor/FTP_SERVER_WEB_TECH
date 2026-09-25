@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: ftp-server-web-tech
+    runtime: docker
+    plan: free
+    healthCheckPath: /health.php
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: SUPABASE_STORAGE_BUCKET
+        value: ftp-uploads
+      - key: REMEMBER_SECRET
+        generateValue: true

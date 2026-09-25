@@ -1,0 +1,7 @@
+.git
+.env
+.env.*
+!.env.example
+FTB.docx
+FTB.pdf
+DEPLOYMENT_GUIDE.md

@@ -1,5 +1,7 @@
 # A$AD FTP
 
+> Current PostgreSQL / Render / Vercel setup: see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md).
+
 ## Project Scenario Summary
 
 **A$AD FTP** is a web-based media library and download platform. It lets visitors browse categorized digital content (software, videos, documents, archives, and more), search and filter listings, and download files. Registered **clients** can submit requests when content is missing; **moderators** and **admins** manage uploads and review those requests.
@@ -15,7 +17,7 @@ The system supports four access levels:
 
 **Typical workflow:** Admin or moderator uploads a file with category and metadata → content appears on the public browse page → users download (download count increments) → clients can request new items → admin/moderator reviews requests from their dashboards.
 
-This project was built as **Web Technologies — WTProject_04**, using PHP with a layered structure (`control/`, `model/`, `view/`), MySQL, client-side validation, AJAX APIs, and security practices required by the assignment.
+This project was built as **Web Technologies — WTProject_04**, using PHP with a layered structure (`control/`, `model/`, `view/`), PostgreSQL, client-side validation, AJAX APIs, and security practices required by the assignment.
 
 ---
 
@@ -37,7 +39,7 @@ The project applies front-end, back-end, database, and security topics from web 
 |-------|----------------------------------|
 | **PHP** | Server-side logic, sessions, routing via `*_process.php` handlers, role gates |
 | **Layered architecture** | `control/` (logic & APIs), `model/` (MyDB + queries), `view/` (templates) |
-| **MySQLi** | Database connection with **prepared statements** (SQL injection prevention) |
+| **PDO PostgreSQL** | Database connection with **prepared statements** (SQL injection prevention) |
 | **Sessions & cookies** | Login state, roles, “Remember Me” (HMAC-signed cookie), CSRF tokens |
 | **File upload** | Profile pictures and content files with extension whitelist and size limits |
 | **Password security** | `password_hash()` on register; `password_verify()` on login |
@@ -46,7 +48,7 @@ The project applies front-end, back-end, database, and security topics from web 
 
 | Topic | How it is used in this project |
 |-------|----------------------------------|
-| **MySQL** | Database name: `isp_media` (see `model/database.php`) |
+| **Supabase PostgreSQL** | Connection from environment variables (see `.env.example`) |
 | **Tables** | `users`, `contents`, `categories`, `content_requests` |
 | **Keys & integrity** | Foreign keys (e.g. content → category, uploader; requests → user after upgrade) |
 
@@ -59,39 +61,13 @@ The project applies front-end, back-end, database, and security topics from web 
 | **CSRF protection** | Hidden token on forms; `requireCsrfPost()` on POST handlers |
 | **Security headers** | `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` |
 | **Responsive UI** | Viewport meta, flexible grids and navigation |
-| **Apache (XAMPP)** | Local hosting; `index.php` redirects to `view/Home.php` |
+| **Apache** | PHP hosting; `index.php` redirects to `view/Home.php` |
 
 ---
 
-## Default User Credentials
+## Deployment and local run
 
-After importing **`database.sql`** in phpMyAdmin (creates database `isp_media` and seed data), use the default admin account documented in the project:
-
-| Role | Email | Password |
-|------|-------|----------|
-| **Admin** | `admin@media.local` | `Admin@1234` |
-
-**Notes:**
-
-- Additional **moderator** accounts are created by admin under **Admin → Staff**.
-- **Client** accounts are created via public **Register** (`registration.php`); role is set to `client` automatically.
-- If you already had an older database, run **`database_upgrade_client.sql`** once (or open `control/db_upgrade_client.php`) to enable the client role and link requests to users.
-
----
-
-## How to Run the Project
-
-1. Install **XAMPP** and start **Apache** and **MySQL**.
-2. Copy the project folder to `htdocs` (e.g. `C:\xampp\htdocs\WTProject_04`).
-3. Import **`database.sql`** in phpMyAdmin (creates `isp_media` and seed admin).
-4. If upgrading an existing DB, also run **`database_upgrade_client.sql`**.
-5. Open: **http://localhost/WTProject_04/view/Home.php**  
-   (or **http://localhost/WTProject_04/** — redirects via `index.php`).
-6. Log in with the admin email and password above.
-
-If MySQL credentials differ from XAMPP defaults, edit **`model/database.php`**.
-
-Setup help page: **`view/db_setup_help.php`**.
+See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md). Create the first admin with a password hash as described there; no default credentials are included.
 
 ---
 
@@ -111,7 +87,7 @@ Setup help page: **`view/db_setup_help.php`**.
 ```
 WTProject_04/
 ├── control/          → Process scripts, gates, JSON APIs, security helpers
-├── model/            → database.php, mydb.php (MySQLi queries)
+├── model/            → database.php, mydb.php (PDO PostgreSQL queries)
 ├── view/             → PHP/HTML pages and navigation partials
 ├── css/              → task1_style.css, task4_style.css
 ├── js/               → task1_script.js, task2_script.js, task4_script.js
@@ -137,4 +113,4 @@ WTProject_04/
 
 ---
 
-This README describes the project scenario, technologies used, and default login details for reviewers, instructors, and repository visitors.
+This README describes the project scenario and technologies for reviewers, instructors, and repository visitors.

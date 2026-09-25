@@ -25,8 +25,8 @@ $row = $result->fetch_assoc();
 $mydb->incrementDownload($id, $conn);
 $mydb->closeConn($conn);
 
-$file = contentFilePath($row["file_path"]);
-if(!is_file($file)){
+$file = storedFilePath('contents', $row["file_path"]);
+if(!$file || !is_file($file)){
     http_response_code(404);
     header("Content-Type: text/html; charset=UTF-8");
     echo "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>File Not Found</title>";
@@ -46,8 +46,9 @@ if(!$mime){
 }
 
 header("Content-Type: " . $mime);
-header("Content-Disposition: attachment; filename=\"" . basename($file) . "\"");
+header("Content-Disposition: attachment; filename=\"" . basename($row["file_path"]) . "\"");
 header("Content-Length: " . filesize($file));
 readfile($file);
+if ($file !== contentFilePath($row["file_path"])) { unlink($file); }
 exit();
 ?>

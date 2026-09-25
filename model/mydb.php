@@ -1,27 +1,22 @@
 <?php
-include_once "database.php";
+require_once __DIR__ . '/database.php';
 
 class MyDB{
     function createConn(){
-        $conn = @new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-        if($conn->connect_error){
+        try {
+            return databaseConnection();
+        } catch (Throwable $e) {
+            error_log('Database connection failed: ' . $e->getMessage());
             return false;
         }
-        $conn->set_charset("utf8mb4");
-        return $conn;
     }
 
     function closeConn($conn){
-        if($conn instanceof mysqli){
-            $tid = $conn->thread_id;
-            if($tid !== null && $tid !== 0){
-                $conn->close();
-            }
-        }
+        // PDO closes when the request releases its connection.
     }
 
     function getUserByEmail($email, $conn){
-        $sql  = "SELECT * FROM users WHERE email = ? LIMIT 1";
+        $sql  = "SELECT * FROM users WHERE lower(email) = lower(?) LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("s", $email);
         $stmt->execute();
@@ -37,7 +32,7 @@ class MyDB{
     }
 
     function emailExists($email, $conn, $excludeId = 0){
-        $sql  = "SELECT id FROM users WHERE email = ? AND id != ? LIMIT 1";
+        $sql  = "SELECT id FROM users WHERE lower(email) = lower(?) AND id != ? LIMIT 1";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("si", $email, $excludeId);
         $stmt->execute();
@@ -108,9 +103,7 @@ class MyDB{
         }
         include_once dirname(__DIR__) . "/control/app.php";
         $path = CONTENT_UPLOAD_DIR . basename($fileName);
-        if(is_file($path)){
-            unlink($path);
-        }
+        deleteStoredFile('contents', $fileName);
     }
 
     function deleteContentWithFile($id, $conn){
@@ -231,7 +224,7 @@ class MyDB{
                 FROM contents
                 LEFT JOIN categories ON contents.category_id = categories.id
                 LEFT JOIN users ON contents.uploader_id = users.id
-                WHERE (contents.title LIKE ? OR contents.description LIKE ?)";
+                WHERE (contents.title ILIKE ? OR contents.description ILIKE ?)";
         $types = "ss";
         $params = array($search, $search);
 
@@ -287,7 +280,7 @@ class MyDB{
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("ssssii", $title, $desc, $path, $ftype, $catId, $uploaderId);
         if($stmt->execute()){
-            return $conn->insert_id;
+            return $conn->lastInsertId('contents_id_seq');
         }
         return false;
     }

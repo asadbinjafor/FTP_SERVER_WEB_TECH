@@ -37,6 +37,7 @@ if(isset($_POST["login"])){
             }
         }
         if(isset($user) && $user){
+            session_regenerate_id(true);
             setLoginSession($user);
             if(isset($_POST["remember"])){
                 setRememberCookie($user["id"]);

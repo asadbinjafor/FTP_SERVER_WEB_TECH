@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/:path*", "destination": "https://REPLACE_WITH_RENDER_HOST.onrender.com/:path*" }
+  ]
+}

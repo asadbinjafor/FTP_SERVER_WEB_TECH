@@ -33,7 +33,7 @@ if($_SESSION["role"] === "client"){
             <?php echo csrfField(); ?>
             <div class="profile-layout" style="display:flex;gap:20px;flex-wrap:wrap;margin-bottom:16px;">
                 <?php if(!empty($user["profile_picture"])){ ?>
-                    <img src="<?php echo PROFILE_UPLOAD_WEB . esc($user["profile_picture"]); ?>" alt="Profile" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--border);">
+                    <img src="../control/profile_image.php" alt="Profile" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:2px solid var(--border);">
                 <?php } else { ?>
                     <div style="width:90px;height:90px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--muted);"><?php echo esc(strtoupper(substr($user["name"], 0, 1))); ?></div>
                 <?php } ?>

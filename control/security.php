@@ -1,9 +1,13 @@
 <?php
+function requestIsHttps(){
+    return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
+        (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+}
 function initSecureSession(){
     if(session_status() === PHP_SESSION_ACTIVE){
         return;
     }
-    $secure = (!empty($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off");
+    $secure = requestIsHttps();
     session_set_cookie_params(array(
         "lifetime" => 0,
         "path"     => "/",

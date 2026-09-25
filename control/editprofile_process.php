@@ -43,11 +43,9 @@ if(isset($_POST["update_profile"])){
             $errors["picture"] = "Image max 2MB";
         } else {
             ensureUploadDir(PROFILE_UPLOAD_DIR);
-            $safe = time() . "_profile." . $ext;
-            if(move_uploaded_file($_FILES["profile_picture"]["tmp_name"], PROFILE_UPLOAD_DIR . $safe)){
-                if($picture !== "" && is_file(PROFILE_UPLOAD_DIR . $picture)){
-                    unlink(PROFILE_UPLOAD_DIR . $picture);
-                }
+            $safe = time() . "_" . bin2hex(random_bytes(4)) . "_profile." . $ext;
+            if(saveUploadedFile($_FILES["profile_picture"], 'profile', $safe)){
+                if($picture !== "") { deleteStoredFile('profile', $picture); }
                 $picture = $safe;
             } else {
                 $errors["picture"] = "Upload failed";
